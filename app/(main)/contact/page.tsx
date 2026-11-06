@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { BsWhatsapp, BsInstagram, BsFacebook, BsSend, BsCheckCircle } from "react-icons/bs";
 import { HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker } from "react-icons/hi";
+import { toast } from "sonner";
 import { config } from "@/lib/config";
 import { submitContactForm } from "@/lib/api";
 import { useSiteConfig, cleanPhoneNumber } from "@/components/site-config-provider";
@@ -59,11 +60,36 @@ export default function ContactPage() {
     e.preventDefault();
     setFormState("sending");
     try {
-      await submitContactForm(formData);
+      // 1. Submit to Formspree endpoint
+      const response = await fetch("https://formspree.io/f/mljjvkbk", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          _replyto: formData.email,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.errors?.[0]?.message || errorData?.error || "Submission failed");
+      }
+
+      // Also save locally for admin contact-messages view
+      submitContactForm(formData).catch(() => {});
+
       setFormState("sent");
+      toast.success("Thank you! Your message has been sent successfully.");
       setFormData({ name: "", email: "", subject: "", message: "" });
       setTimeout(() => setFormState("idle"), 4000);
-    } catch {
+    } catch (err: any) {
+      toast.error(err.message || "Failed to send message. Please try again.");
       setFormState("idle");
     }
   };
@@ -129,12 +155,19 @@ export default function ContactPage() {
                   Fill out the form below and we&apos;ll get back to you as soon as possible.
                 </p>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form
+                  action="https://formspree.io/f/mljjvkbk"
+                  method="POST"
+                  onSubmit={handleSubmit}
+                  className="space-y-6"
+                >
+                  <input type="hidden" name="_subject" value={`SpicyGlaze Contact: ${formData.subject || "New Inquiry"}`} />
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-charcoal mb-2">Your Name</label>
                       <input
                         type="text"
+                        name="name"
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -146,6 +179,7 @@ export default function ContactPage() {
                       <label className="block text-sm font-medium text-charcoal mb-2">Email Address</label>
                       <input
                         type="email"
+                        name="email"
                         required
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -159,6 +193,7 @@ export default function ContactPage() {
                     <label className="block text-sm font-medium text-charcoal mb-2">Subject</label>
                     <input
                       type="text"
+                      name="subject"
                       required
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
@@ -170,6 +205,7 @@ export default function ContactPage() {
                   <div>
                     <label className="block text-sm font-medium text-charcoal mb-2">Message</label>
                     <textarea
+                      name="message"
                       required
                       rows={5}
                       value={formData.message}

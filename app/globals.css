@@ -234,3 +234,46 @@ body {
     scroll-behavior: auto;
   }
 }
+
+/* Mobile Performance & Smooth Scrolling Optimizations */
+@media (max-width: 1024px) {
+  /* Disable heavy SVG turbulence filter overlay on mobile/tablets to fix lag */
+  .grain-overlay {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Optimize glass morphism on mobile (lightweight blur + higher opacity) */
+  .glass {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    background: rgba(255, 249, 242, 0.94) !important;
+  }
+
+  /* Cap heavy GPU blur radius on mobile devices */
+  .blur-3xl {
+    filter: blur(24px) !important;
+  }
+
+  /* Stop continuous CPU/GPU border-radius morphing calculations on mobile */
+  .animate-blob {
+    animation: none !important;
+    transform: translateZ(0);
+  }
+
+  .animate-float {
+    animation-duration: 8s !important;
+  }
+}
+
+/* Hardware-accelerate transforms to run on GPU compositor thread */
+.animate-float,
+.animate-pulse-soft,
+.animate-blob,
+.animate-spin-slow {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform;
+}

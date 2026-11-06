@@ -69,7 +69,7 @@ export default function ContactSection() {
 
           {/* Email */}
           <motion.a
-            href={`mailto:${email}`}
+            href="/contact/"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -79,7 +79,7 @@ export default function ContactSection() {
             <div className="w-14 h-14 rounded-2xl bg-turmeric/10 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
               <Mail size={24} className="text-turmeric" />
             </div>
-            <h3 className="font-semibold text-charcoal mb-1">Email</h3>
+            <h3 className="font-semibold text-charcoal mb-1">Email Us</h3>
             <p className="text-sm text-muted">{email}</p>
           </motion.a>
         </div>

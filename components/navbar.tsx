@@ -24,7 +24,16 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
+    let ticking = false;
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 40);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -39,10 +48,10 @@ export default function Navbar() {
       {/* Floating Navbar */}
       <nav
         className={cn(
-          "fixed z-50 transition-all duration-500 ease-out",
+          "fixed z-50 transition-all duration-300 ease-out top-4 left-3 right-3 sm:left-4 sm:right-4",
           scrolled
-            ? "top-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:max-w-3xl glass rounded-full py-3 px-4 shadow-lg shadow-charcoal/5"
-            : "top-6 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:max-w-4xl glass rounded-full py-3 px-4"
+            ? "md:top-4 md:left-1/2 md:-translate-x-1/2 md:max-w-3xl glass rounded-full py-2.5 sm:py-3 px-4 shadow-lg shadow-charcoal/5"
+            : "md:top-6 md:left-1/2 md:-translate-x-1/2 md:max-w-4xl glass rounded-full py-2.5 sm:py-3 px-4"
         )}
       >
         <div className="flex items-center justify-between">
