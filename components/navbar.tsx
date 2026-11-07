@@ -109,10 +109,10 @@ export default function Navbar() {
       {/* Full-Screen Mobile Menu */}
       <div
         className={cn(
-          "fixed inset-0 z-[60] md:hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          "fixed inset-0 z-[60] md:hidden transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
           mobileOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
+            ? "opacity-100 pointer-events-auto visible"
+            : "opacity-0 pointer-events-none invisible"
         )}
       >
         {/* Backdrop */}

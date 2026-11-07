@@ -1,7 +1,14 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Playfair_Display, DM_Sans } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/providers";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#FFF9F2",
+};
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -62,7 +69,6 @@ export default function RootLayout({
     >
       <body className="min-h-screen bg-cream text-charcoal">
         <Providers>{children}</Providers>
-        <div className="grain-overlay" aria-hidden="true" />
         <Toaster position="bottom-right" richColors />
       </body>
     </html>
