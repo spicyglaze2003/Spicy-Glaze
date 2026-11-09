@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { X } from "lucide-react";
+import { X, ShoppingCart } from "lucide-react";
 import { BsWhatsapp } from "react-icons/bs";
 import { HiMenuAlt3 } from "react-icons/hi";
 import { cn } from "@/lib/utils";
 import { useSiteConfig, cleanPhoneNumber } from "@/components/site-config-provider";
+import { useCartStore } from "@/lib/store";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -20,8 +21,18 @@ export default function Navbar() {
   const waNum = cleanPhoneNumber(siteConfig.whatsappNumber);
   const waMsg = siteConfig.whatsappMessage || "Hi! I'm interested in SpicyGlaze products.";
 
+  const { items, openCart } = useCartStore();
+  const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const totalCount = mounted
+    ? items.reduce((count, item) => count + (Number(item.quantity) || 1), 0)
+    : 0;
 
   useEffect(() => {
     let ticking = false;
@@ -84,7 +95,26 @@ export default function Navbar() {
           </div>
 
           {/* Right Side */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* Cart Button with Count Badge */}
+            <button
+              onClick={openCart}
+              className="relative flex items-center gap-1.5 py-2 px-2.5 sm:px-3 rounded-full bg-cream hover:bg-orange-100/70 border border-orange-200/60 text-charcoal hover:text-primary transition-all duration-300 shadow-sm hover:shadow cursor-pointer group"
+              aria-label={`Shopping cart with ${totalCount} items`}
+            >
+              <div className="relative flex items-center justify-center">
+                <ShoppingCart size={18} className="text-charcoal group-hover:text-primary transition-colors" />
+                {totalCount > 0 && (
+                  <span className="absolute -top-2.5 -right-2.5 min-w-[18px] h-[18px] px-1 rounded-full bg-primary text-white text-[10px] font-black flex items-center justify-center shadow-md animate-scale-in">
+                    {totalCount > 99 ? "99+" : totalCount}
+                  </span>
+                )}
+              </div>
+              <span className="hidden sm:inline text-xs font-bold text-charcoal group-hover:text-primary transition-colors">
+                Cart
+              </span>
+            </button>
+
             <a
               href={`https://wa.me/${waNum}?text=${encodeURIComponent(waMsg)}`}
               target="_blank"
@@ -97,7 +127,7 @@ export default function Navbar() {
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300"
+              className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer"
               aria-label="Toggle menu"
             >
               {mobileOpen ? <X size={20} /> : <HiMenuAlt3 size={20} />}
@@ -169,16 +199,39 @@ export default function Navbar() {
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "font-[var(--font-playfair)] text-5xl font-semibold text-charcoal hover:text-primary transition-all duration-500 py-3",
+                  "font-[var(--font-playfair)] text-4xl sm:text-5xl font-semibold text-charcoal hover:text-primary transition-all duration-500 py-2 sm:py-3",
                   mobileOpen
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-6"
                 )}
-                style={{ transitionDelay: mobileOpen ? `${150 + i * 100}ms` : "0ms" }}
+                style={{ transitionDelay: mobileOpen ? `${150 + i * 80}ms` : "0ms" }}
               >
                 {link.label}
               </Link>
             ))}
+
+            {/* Mobile Cart Option */}
+            <button
+              onClick={() => {
+                setMobileOpen(false);
+                openCart();
+              }}
+              className={cn(
+                "font-[var(--font-playfair)] text-3xl sm:text-4xl font-bold text-primary flex items-center gap-3 transition-all duration-500 py-3 mt-2 cursor-pointer",
+                mobileOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+              )}
+              style={{ transitionDelay: mobileOpen ? `${150 + navLinks.length * 80}ms` : "0ms" }}
+            >
+              <div className="relative">
+                <ShoppingCart size={28} />
+                {totalCount > 0 && (
+                  <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 rounded-full bg-charcoal text-white text-[10px] font-black flex items-center justify-center shadow-md">
+                    {totalCount}
+                  </span>
+                )}
+              </div>
+              <span>Cart ({totalCount})</span>
+            </button>
           </div>
 
           {/* WhatsApp CTA */}

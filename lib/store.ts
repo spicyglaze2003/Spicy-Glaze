@@ -18,10 +18,14 @@ interface CartStore {
   items: CartItem[];
   totalAmount: number;
   itemCount: number;
+  isOpen: boolean;
   addItem: (item: CartItem) => void;
   removeItem: (variantId: string) => void;
   updateQuantity: (variantId: string, quantity: number) => void;
   clearCart: () => void;
+  openCart: () => void;
+  closeCart: () => void;
+  toggleCart: () => void;
   getTotalAmount: () => number;
   getItemCount: () => number;
 }
@@ -44,6 +48,11 @@ export const useCartStore = create<CartStore>()(
       items: [],
       totalAmount: 0,
       itemCount: 0,
+      isOpen: false,
+
+      openCart: () => set({ isOpen: true }),
+      closeCart: () => set({ isOpen: false }),
+      toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
 
       addItem: (item) => {
         const itemPrice = Number(item.price) || 0;
@@ -90,6 +99,7 @@ export const useCartStore = create<CartStore>()(
             items: nextItems,
             totalAmount: totals.totalAmount,
             itemCount: totals.itemCount,
+            isOpen: true, // Automatically open cart drawer so user sees their item
           };
         });
 

@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import type { Product } from "@/lib/types";
 import { formatPrice, getProductImageUrl } from "@/lib/utils";
 import { ArrowRight, ShoppingCart } from "lucide-react";
+import { useCartStore } from "@/lib/store";
 
 interface ProductCardProps {
   product: Product;
@@ -15,6 +16,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const [imgError, setImgError] = useState(false);
+  const { addItem } = useCartStore();
   const thumbnailUrl = getProductImageUrl(product);
   const productHref = `/products/${product.slug || product.productId || product.id}`;
 
@@ -27,6 +29,23 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const discountPercent = hasDiscount
     ? Math.round(((currentMrp - currentPrice) / currentMrp) * 100)
     : 0;
+
+  const handleQuickAddToCart = () => {
+    const defaultVariant = product.variants?.[0];
+    const variantId = defaultVariant ? String(defaultVariant.id) : `default-${product.id}`;
+    const variantName = defaultVariant?.name || "Standard";
+
+    addItem({
+      variantId,
+      productId: String(product.id),
+      name: variantName,
+      productName: product.name,
+      price: currentPrice,
+      quantity: 1,
+      stock: defaultVariant?.stock !== undefined ? defaultVariant.stock : (product.stock ?? 999),
+      imageUrl: thumbnailUrl || undefined,
+    });
+  };
 
   return (
     <motion.div
@@ -109,14 +128,30 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
             )}
           </div>
 
-          <Link
-            href={productHref}
-            className="mt-4 w-full flex items-center justify-center gap-2 bg-primary/10 text-primary py-2.5 rounded-xl text-sm font-semibold hover:bg-primary hover:text-white transition-all shadow-sm group-hover:shadow-md cursor-pointer"
-          >
-            <ShoppingCart size={15} />
-            <span>View & Order</span>
-            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
+          <div className="mt-4 flex items-center gap-2">
+            <Link
+              href={productHref}
+              className="flex-1 flex items-center justify-center gap-1.5 bg-primary/10 text-primary py-2.5 rounded-xl text-xs sm:text-sm font-semibold hover:bg-primary hover:text-white transition-all shadow-sm cursor-pointer group/btn"
+            >
+              <span>View & Order</span>
+              <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+            </Link>
+
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleQuickAddToCart();
+              }}
+              disabled={product.availability === "out-of-season" || (product.stock !== undefined && product.stock <= 0)}
+              className="p-2.5 rounded-xl bg-primary text-white hover:bg-primary-dark transition-all shadow-sm hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex-shrink-0"
+              title="Add to Cart"
+              aria-label="Add to Cart"
+            >
+              <ShoppingCart size={16} />
+            </button>
+          </div>
         </div>
       </div>
     </motion.div>

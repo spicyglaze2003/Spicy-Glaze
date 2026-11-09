@@ -112,15 +112,20 @@ body {
 
 /* Blob Animation */
 @keyframes blob-morph {
-  0%, 100% {
+
+  0%,
+  100% {
     border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
   }
+
   25% {
     border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
   }
+
   50% {
     border-radius: 50% 60% 30% 60% / 30% 40% 70% 60%;
   }
+
   75% {
     border-radius: 60% 30% 60% 40% / 70% 50% 40% 60%;
   }
@@ -132,12 +137,16 @@ body {
 
 /* Float Animation */
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg);
   }
+
   33% {
     transform: translateY(-12px) rotate(1deg);
   }
+
   66% {
     transform: translateY(6px) rotate(-1deg);
   }
@@ -152,27 +161,29 @@ body {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
 }
 
 .animate-shimmer {
-  background: linear-gradient(
-    90deg,
-    var(--color-beige) 25%,
-    var(--color-cream) 50%,
-    var(--color-beige) 75%
-  );
+  background: linear-gradient(90deg,
+      var(--color-beige) 25%,
+      var(--color-cream) 50%,
+      var(--color-beige) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 }
 
 /* Gradient Mesh */
 @keyframes gradient-shift {
-  0%, 100% {
+
+  0%,
+  100% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
@@ -188,6 +199,7 @@ body {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -199,10 +211,13 @@ body {
 
 /* Pulse Soft */
 @keyframes pulse-soft {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.4;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.7;
     transform: scale(1.05);
@@ -223,6 +238,7 @@ body {
 
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -238,6 +254,7 @@ body {
 
 /* Mobile Performance & Smooth Scrolling Optimizations */
 @media (max-width: 768px) {
+
   /* Optimize glass morphism on mobile (lightweight blur + higher opacity) */
   .glass {
     backdrop-filter: blur(8px) !important;
@@ -263,6 +280,7 @@ body {
 
 /* Touchscreens: Prevent hover animation lag on tap and give instant response */
 @media (hover: none) and (pointer: coarse) {
+
   /* Disable translation animations on touch tap to remove tap stickiness */
   .group:hover,
   a:hover,

@@ -1,6 +1,7 @@
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import WhatsAppButton from "@/components/whatsapp-button";
+import CartDrawer from "@/components/cart-drawer";
 
 export default function MainLayout({
   children,
@@ -13,6 +14,7 @@ export default function MainLayout({
       <main className="flex-1">{children}</main>
       <Footer />
       <WhatsAppButton />
+      <CartDrawer />
     </>
   );
 }
